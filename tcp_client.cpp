@@ -11,7 +11,8 @@ using namespace std;
  
 int socket_file_descriptor, connection;
 struct sockaddr_in serveraddress, client;
-char message[MESSAGE_LENGTH];
+string message;
+
 int main(){
     // Создадим сокет
     socket_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
@@ -34,22 +35,22 @@ int main(){
     }
     // Взаимодействие с сервером
     while(1){
-        bzero(message, sizeof(message));
+        bzero(&message, sizeof(string));
         cout << "Enter the message you want to send to the server: " << endl;
-        cin.getline(message, MESSAGE_LENGTH);
-        if ((strncmp(message, "end", 3)) == 0) {
-            write(socket_file_descriptor, message, sizeof(message));
+        getline(cin, message);
+        if (message == "end") {
+            write(socket_file_descriptor, &message, sizeof(string));
             cout << "Client Exit." << endl;
             break;
         }
-        ssize_t bytes = write(socket_file_descriptor, message, sizeof(message));
+        ssize_t bytes = write(socket_file_descriptor, &message, sizeof(string));
         // Если передали >= 0  байт, значит пересылка прошла успешно
         if(bytes >= 0){
         cout << "Data send to the server successfully.!" << endl;
     }
-    bzero(message, sizeof(message));
+    bzero(&message, sizeof(string));
     // Ждем ответа от сервера
-    read(socket_file_descriptor, message, sizeof(message));
+    read(socket_file_descriptor, &message, sizeof(string));
     cout << "Data received from server: " << message << endl;
     }
     // закрываем сокет, завершаем соединение

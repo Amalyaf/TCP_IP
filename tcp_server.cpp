@@ -12,7 +12,7 @@ using namespace std;
 struct sockaddr_in serveraddress, client;
 socklen_t length;
 int socket_file_descriptor, connection, bind_status, connection_status;
-char message[MESSAGE_LENGTH];
+string message;
  
 int main()  {
     // Создадим сокет
@@ -51,18 +51,18 @@ int main()  {
     
     // Communication Establishment
     while(1){
-        bzero(message, MESSAGE_LENGTH);
-        read(connection, message, sizeof(message));
-            if (strncmp("end", message, 3) == 0) {
+        bzero(&message, sizeof(string));
+        read(connection, &message, sizeof(string));
+            if (message == "end") {
                 cout << "Client Exited." << endl;
                 cout << "Server is Exiting..!" << endl;
                 break;
             }
         cout << "Data received from client: " <<  message << endl;
-        bzero(message, MESSAGE_LENGTH);
+        bzero(&message, sizeof(string));
         cout << "Enter the message you want to send to the client: " << endl;
-        cin.getline(message, MESSAGE_LENGTH);
-        ssize_t bytes = write(connection, message, sizeof(message));
+        getline(cin, message);
+        ssize_t bytes = write(connection, &message, sizeof(string));
         // Если передали >= 0  байт, значит пересылка прошла успешно
         if(bytes >= 0)  {
            cout << "Data successfully sent to the client.!" << endl;
